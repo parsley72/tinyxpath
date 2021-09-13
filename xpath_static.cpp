@@ -67,7 +67,7 @@ namespace TinyXPath
       xpath_processor xp_proc (XNp_source_tree, cp_xpath_expr);
       u_nb = xp_proc . u_compute_xpath_node_set ();
       if (! u_nb)
-         return NULL;
+         return nullptr;
       return xp_proc . XNp_get_xpath_node (0);
    }
 
@@ -79,7 +79,7 @@ namespace TinyXPath
       xpath_processor xp_proc (XNp_source_tree, cp_xpath_expr);
       u_nb = xp_proc . u_compute_xpath_node_set ();
       if (! u_nb)
-         return NULL;
+         return nullptr;
       return xp_proc . XAp_get_xpath_attribute (0);
    }
 
@@ -141,3 +141,4 @@ namespace TinyXPath
       return xp_proc . e_error == TinyXPath::xpath_processor::e_no_error;
    }
 }
+

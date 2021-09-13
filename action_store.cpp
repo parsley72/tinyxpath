@@ -41,7 +41,7 @@ action_store::action_store ()
    i_size = 0;
    i_position = 0;
    i_alloc = 0;
-   aipp_list = NULL;
+   aipp_list = nullptr;
 }
 
 /// destructor
@@ -88,3 +88,4 @@ void action_store::v_get (int i_entry, int & i_1, int & i_2, int & i_3, TIXML_ST
 }
 
 }
+

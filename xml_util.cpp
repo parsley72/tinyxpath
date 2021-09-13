@@ -39,7 +39,7 @@ int i_xml_cardinality (
 {
 	const TiXmlNode * XNp_parent;
 	const TiXmlElement * XEp_child;
-   TIXML_STRING S_name; 
+   TIXML_STRING S_name;
 	int i_res;
 
    assert (XEp_elem);
@@ -82,7 +82,7 @@ int i_xml_cardinality (
 
 /// Family size : Nb of sibling elements (including ourselves)
 int i_xml_family_size (
-   const TiXmlElement * XEp_elem)   ///< Base element. Must not be null 
+   const TiXmlElement * XEp_elem)   ///< Base element. Must not be null
 {
 	const TiXmlElement * XEp_child;
 	const TiXmlNode * XNp_parent;
@@ -102,3 +102,4 @@ int i_xml_family_size (
 }
 
 }
+

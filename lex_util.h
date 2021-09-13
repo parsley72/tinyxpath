@@ -34,9 +34,6 @@ distribution.
 #include "tinyxpath_conf.h"
 #include "tinyxml.h"
 
-#ifdef _MSC_VER
-   #pragma warning (disable : 4514)  
-#endif
 
 namespace TinyXPath
 {
@@ -48,12 +45,12 @@ enum lexico {
             // single chars
 
             lex_null, lex_none, lex_space, lex_digit, lex_bchar, lex_extend, lex_slash, lex_at,
-            lex_dot, lex_minus, lex_under, lex_colon, lex_scolon, lex_2_quote, lex_1_quote, 
+            lex_dot, lex_minus, lex_under, lex_colon, lex_scolon, lex_2_quote, lex_1_quote,
             lex_dollar, lex_oparen, lex_cparen, lex_star, lex_plus, lex_comma, lex_lt,
             lex_gt, lex_equal, lex_obrack, lex_cbrack, lex_orchar, lex_exclam,
-            
+
             // constructions
-            
+
             lex_ncname, lex_number, lex_literal, lex_2_colon, lex_2_slash, lex_2_dot, lex_not_equal,
             lex_lt_equal, lex_gt_equal,
 
@@ -63,9 +60,9 @@ enum lexico {
             lex_or = lex_start_keyword, lex_and, lex_mod, lex_div,
 
             lex_start_axis_name,
-            lex_ancestor = lex_start_axis_name, lex_ancestor_or_self, lex_attribute, lex_child, lex_descendant, 
-            lex_descendant_or_self, lex_following, lex_following_sibling, lex_namespace, 
-            lex_parent, lex_preceding, lex_preceding_sibling, lex_self, 
+            lex_ancestor = lex_start_axis_name, lex_ancestor_or_self, lex_attribute, lex_child, lex_descendant,
+            lex_descendant_or_self, lex_following, lex_following_sibling, lex_namespace,
+            lex_parent, lex_preceding, lex_preceding_sibling, lex_self,
             lex_end_axis_name = lex_self,
 
             lex_processing_instruction,

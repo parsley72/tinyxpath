@@ -24,7 +24,7 @@ distribution.
 #ifndef __TINYBYTESTREAM_H
 #define __TINYBYTESTREAM_H
 
-#include <string.h>
+#include <cstring>
 #include "lex_util.h"
 
 namespace TinyXPath
@@ -37,7 +37,7 @@ namespace TinyXPath
 class byte_stream
 {
    /// Length of the total string, + 1
-   unsigned u_length;
+   size_t u_length;
    /// Total string
    _byte_ * bp_in;
    /// Current read position
@@ -50,12 +50,24 @@ public :
    /// constructor
    byte_stream (const char * cp_in)
    {
-      u_length = strlen (cp_in) + 1;
-      bp_in = new _byte_ [u_length] ;
-      memcpy (bp_in, cp_in, u_length);
-      bp_current = bp_in;
-      bp_end = bp_in + u_length - 1;
-      o_valid = (bp_current != bp_end);
+      if (cp_in)
+      {
+         u_length = strlen (cp_in) + 1;
+         bp_in = new _byte_ [u_length] ;
+         memcpy (bp_in, cp_in, u_length);
+         bp_current = bp_in;
+         bp_end = bp_in + u_length - 1;
+         o_valid = (bp_current != bp_end);
+      }
+      else
+      {
+         u_length = 1;
+         bp_in = new _byte_ [u_length] ;
+         bp_in[0] = 0;
+         bp_current = bp_in;
+         bp_end = bp_in + u_length - 1;
+         o_valid = (bp_current != bp_end);
+      }
    }
    /// destructor
    ~ byte_stream ()
@@ -63,7 +75,7 @@ public :
       if (bp_in)
          delete [] bp_in;
    }
-   /// Returns the byte on top 
+   /// Returns the byte on top
    _byte_ b_top ()
    {
       return * bp_current;
@@ -94,7 +106,7 @@ public :
          return bp_current [u_nb_char];
       return 0;
    }
-   /// get a byte backward pointer to the stream 
+   /// get a byte backward pointer to the stream
    const _byte_ * bp_get_backward (unsigned u_amount)
    {
       return bp_current - u_amount + 1;

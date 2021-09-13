@@ -34,7 +34,7 @@ namespace TinyXPath
 {
 
 /// xpath_stack element. Derives from expression_result, and also contains a pointer to the next element on the stack
-class result_and_next : public expression_result 
+class result_and_next : public expression_result
 {
 public :
    /// Constructor
@@ -44,7 +44,7 @@ public :
       rnp_next = rnp_in_next;
    }
    /// Return next element
-   result_and_next * rnp_get_next () 
+   result_and_next * rnp_get_next ()
    {
       return rnp_next;
    }
@@ -65,14 +65,15 @@ protected :
 #endif
 
 /// Constructor
-xpath_stack::xpath_stack () 
+xpath_stack::xpath_stack ()
 {
-   rnp_first = NULL;
+   rnp_first = nullptr;
    u_size = 0;
+   XNp_root = nullptr;
 }
 
 /// Destructor
-xpath_stack::~ xpath_stack () 
+xpath_stack::~ xpath_stack ()
 {
    while (rnp_first)
       v_pop_one ();
@@ -82,20 +83,20 @@ xpath_stack::~ xpath_stack ()
 int xpath_stack::i_pop_int ()
 {
    int i_res;
-   
+
    i_res = erp_top () -> i_get_int ();
    v_pop ();
-   return i_res;   
+   return i_res;
 }
 
 /// Pops the top string from the stack
 TIXML_STRING xpath_stack::S_pop_string ()
 {
    TIXML_STRING S_res;
-   
+
    S_res = erp_top () -> S_get_string ();
    v_pop ();
-   return S_res;   
+   return S_res;
 }
 
 /// Pops the top bool from the stack
@@ -122,9 +123,9 @@ node_set xpath_stack::ns_pop_node_set ()
 int xpath_stack::i_top_int ()
 {
    int i_res;
-   
+
    i_res = erp_top () -> i_get_int ();
-   return i_res;   
+   return i_res;
 }
 
 /// Push a new element on the stack
@@ -246,3 +247,4 @@ void xpath_stack::v_pop (unsigned u_nb)
 #endif
 
 }
+

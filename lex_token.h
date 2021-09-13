@@ -24,8 +24,8 @@ distribution.
 #ifndef __TINYLEXTOKEN_H
 #define __TINYLEXTOKEN_H
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #include "lex_util.h"
 
@@ -33,9 +33,9 @@ namespace TinyXPath
 {
 
 /**
-   A lexical token stream, part of a single linked list 
+   A lexical token stream, part of a single linked list
 */
-class lex_token 
+class lex_token
 {
    /// Representation
    char * cp_value;
@@ -52,8 +52,8 @@ public :
       if (u_in_size)
          memcpy (cp_value, bp_in_value, u_in_size);
       cp_value [u_in_size] = 0;
-      ltp_next = NULL;
-      ltp_prev = NULL;
+      ltp_next = nullptr;
+      ltp_prev = nullptr;
    }
    /// set the next element in list
    void v_set_next (lex_token * ltp_in_next)
@@ -94,10 +94,10 @@ public :
       for (i = 0; i < i_nb; i++)
       {
          if (! ltp_ret)
-            return NULL;
+            return nullptr;
          ltp_ret = ltp_ret -> ltp_get_next ();
          if (! ltp_ret || ! ltp_ret -> o_is_valid ())
-            return NULL;
+            return nullptr;
       }
       return ltp_ret;
    }
@@ -111,7 +111,7 @@ public :
    /// Set the string value of a lexical element
    void v_set (lexico lex_in, const char * cp_repre)
    {
-      unsigned u_length;
+      size_t u_length;
 
       l_enum = lex_in;
       delete [] cp_value;

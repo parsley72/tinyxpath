@@ -42,7 +42,7 @@ namespace TinyXPath
    Note that the empty list consist of a single null element in order to speed
    up later insertions
 */
-class token_list 
+class token_list
 {
 protected :
    /// Pointer to first element
@@ -54,13 +54,13 @@ protected :
    lex_token * ltp_current;
 public :
    /// constructor
-   token_list () 
+   token_list ()
    {
-      ltp_first = new lex_token (lex_null, NULL, 0);
+      ltp_first = new lex_token (lex_null, nullptr, 0);
       ltp_last = ltp_first;
       ltp_first -> v_set_prev (ltp_first);
       ltp_first -> v_set_next (ltp_first);
-      ltp_current = NULL;
+      ltp_current = nullptr;
    }
    /// destructor
    virtual ~ token_list ()
@@ -89,7 +89,7 @@ public :
       ltp_current = ltp_first -> ltp_get_next (1);
    }
 
-   /// Set current 
+   /// Set current
    void v_set_current (lex_token * ltp_cur)
    {
       ltp_current = ltp_cur;
@@ -102,10 +102,10 @@ public :
    }
 
    /// Get next X linear token
-   lex_token * ltp_get (int i_offset) 
+   lex_token * ltp_get (int i_offset)
    {
       if (! ltp_current)
-         return NULL;
+         return nullptr;
       return ltp_current -> ltp_get_next (i_offset);
    }
 
@@ -117,7 +117,7 @@ public :
       ltp_current = ltp_current -> ltp_get_next (i_rel);
    }
 
-   /// Replaces the current element 
+   /// Replaces the current element
    void v_replace_current (lexico lex_in, const char * cp_rep)
    {
       if (! ltp_current)

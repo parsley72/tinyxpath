@@ -35,9 +35,9 @@ namespace TinyXPath
 {
 
 /// Redefinition of a token_syntax_decoder, with an xpath_stream pointer
-/// \n We could have made this a double dependency on token_syntax_decoder and xpath_stream, 
+/// \n We could have made this a double dependency on token_syntax_decoder and xpath_stream,
 /// but this is not good pratice IMHO
-class token_redef : public token_syntax_decoder 
+class token_redef : public token_syntax_decoder
 {
 protected :
    /// pointer to an xpath_stream instance
@@ -49,7 +49,7 @@ public :
 	{
 		xsp_stream = xsp_in;
 	}
-   /// dispatcher of the xpath_stream::v_action 
+   /// dispatcher of the xpath_stream::v_action
    virtual void v_action (xpath_construct xc_rule, unsigned u_sub, unsigned u_variable = 0, const char * cp_literal = "")
 	{
 		xsp_stream -> v_action (xc_rule, u_sub, u_variable, cp_literal);
@@ -59,9 +59,10 @@ public :
 } ;
 
 /// xpath_stream constructor
-xpath_stream::xpath_stream (const char * cp_in) : byte_stream (cp_in) 
+xpath_stream::xpath_stream (const char * cp_in) : byte_stream (cp_in)
 {
    tlp_list = new token_redef (this);
 }
 
 }
+

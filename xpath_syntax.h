@@ -31,8 +31,8 @@ distribution.
 #ifndef __TINYSYNTAX_H
 #define __TINYSYNTAX_H
 
-#include <assert.h>
-#include <stdio.h>
+#include <cassert>
+#include <cstdio>
 #include "tokenlist.h"
 
 namespace TinyXPath
@@ -42,10 +42,14 @@ namespace TinyXPath
 class syntax_error
 {
 public :
-   syntax_error (const char * cp_mess = NULL)
+   syntax_error (const char * cp_mess = nullptr)
    {
       if (cp_mess && strlen (cp_mess) < sizeof (ca_mess) - 1)
-         strcpy (ca_mess, cp_mess);
+      {
+        size_t length = strlen (cp_mess);
+        strncpy (ca_mess, cp_mess, length);
+        ca_mess [length] = 0;
+      }
       else
          ca_mess [0] = 0;
    }
@@ -64,11 +68,11 @@ protected :
    unsigned u_nb_recurs;
    bool o_recognize (xpath_construct xc_current, bool o_final);
 public :
-   token_syntax_decoder () : token_list ()   {}
-   virtual ~ token_syntax_decoder ()   {}
+   token_syntax_decoder () : token_list (), u_nb_recurs(0)  {}
+   virtual ~ token_syntax_decoder ()   = default;
    void v_syntax_decode ();
    /// Pure virtual : action taken when processing the rule
-   virtual void v_action (xpath_construct xc_rule, unsigned u_sub, 
+   virtual void v_action (xpath_construct xc_rule, unsigned u_sub,
 		unsigned u_variable = 0, const char * cp_literal = "") = 0;
    virtual int i_get_action_counter () = 0;
 } ;

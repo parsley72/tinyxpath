@@ -41,9 +41,9 @@ class result_and_next;
 
 /// The XPath execution stack
 /// \n All elements are result_and_next elements
-class xpath_stack 
+class xpath_stack
 {
-public : 
+public :
    xpath_stack ();
    void v_set_root (const TiXmlNode * XNp_in_root)
    {
@@ -51,7 +51,7 @@ public :
    }
    ~ xpath_stack ();
    void v_push (expression_result er_res);
-   void v_push_int (int i_elem, const char * cp_comment = NULL);
+   void v_push_int (int i_elem, const char * cp_comment = nullptr);
    void v_push_bool (bool o_in);
    void v_push_string (TIXML_STRING S_in);
    void v_push_double (double d_elem);

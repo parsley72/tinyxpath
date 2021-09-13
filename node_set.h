@@ -36,24 +36,24 @@ class node_set
 {
 public :
    /// constructor : creates an empty set
-   node_set () 
+   node_set ()
    {
-      u_nb_node = 0; 
-      vpp_node_set = NULL;
-      op_attrib = NULL;
+      u_nb_node = 0;
+      vpp_node_set = nullptr;
+      op_attrib = nullptr;
    }
    /// copy constructor
    node_set (const node_set & ns2);
    /// destructor
    ~ node_set ()
    {
-      if (u_nb_node && vpp_node_set) 
+      if (u_nb_node && vpp_node_set)
          delete [] vpp_node_set;
       if (u_nb_node && op_attrib)
          delete [] op_attrib;
-      u_nb_node = 0; 
-      vpp_node_set = NULL;
-      op_attrib = NULL;
+      u_nb_node = 0;
+      vpp_node_set = nullptr;
+      op_attrib = nullptr;
    }
 
    node_set & operator = (const node_set & ns2);
@@ -74,7 +74,7 @@ public :
    bool o_exist_in_set (const TiXmlBase * XBp_member);
    void v_add_all_foll_node (const TiXmlNode * XNp_node, const TIXML_STRING & S_name);
    void v_add_all_prec_node (const TiXmlNode * XNp_node, const TIXML_STRING & S_name);
-   
+
    /// Add a new node, if the name is "*" or if the name is the same as the node
    void v_add_node_in_set_if_name_or_star (const TiXmlNode * XNp_node, const TIXML_STRING & S_name)
    {
@@ -100,20 +100,20 @@ public :
    }
 
    /// Get nb of nodes in the node set
-   unsigned u_get_nb_node_in_set () const 
+   unsigned u_get_nb_node_in_set () const
    {
       return u_nb_node;
    }
 
    /// Get a node or an attribute
-   const TiXmlBase * XBp_get_base_in_set (unsigned u_which) 
+   const TiXmlBase * XBp_get_base_in_set (unsigned u_which)
    {
       assert (u_which < u_nb_node);
       return (const TiXmlBase *) vpp_node_set [u_which];
    }
 
    /// Get a node
-   const TiXmlNode * XNp_get_node_in_set (unsigned u_which) 
+   const TiXmlNode * XNp_get_node_in_set (unsigned u_which)
    {
       assert (u_which < u_nb_node);
       assert (! o_is_attrib (u_which));
@@ -121,7 +121,7 @@ public :
    }
 
    /// Get an attribute
-   const TiXmlAttribute * XAp_get_attribute_in_set (unsigned u_which) 
+   const TiXmlAttribute * XAp_get_attribute_in_set (unsigned u_which)
    {
       assert (u_which < u_nb_node);
       assert (o_is_attrib (u_which));
@@ -172,7 +172,7 @@ public :
 protected :
    /// Nb of nodes in the set
    unsigned u_nb_node;
-   /// List of node pointers to the 
+   /// List of node pointers to the
 	const void ** vpp_node_set;
    /// Attributes flag list
    bool * op_attrib;

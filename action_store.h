@@ -37,7 +37,7 @@ namespace TinyXPath
 
 /// Action item for the XPath action placeholder
 /// \n Able to store 1 quadruplet (3 integers and a string)
-class action_item 
+class action_item
 {
 public :
    /// constructor
@@ -65,9 +65,9 @@ protected :
 /// The XPath action stack. Not a stack per se, only a placeholder
 /// \n It's able to store quadruplets (3 integers and a string)
 /// \n It allocates them by set of 100
-class action_store 
+class action_store
 {
-public : 
+public :
    action_store  ();
    ~ action_store  ();
    /// add an element on the placeholder, given its details

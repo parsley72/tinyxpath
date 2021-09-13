@@ -28,9 +28,9 @@ distribution.
 */
 /*
  @history:
- 
+
  Modified on 18 December 2006 by Aman Aggarwal
- ::Added support for translate()  
+ ::Added support for translate()
 */
 #ifndef __XPATH_PROCESSOR_H
 #define __XPATH_PROCESSOR_H
@@ -53,7 +53,7 @@ class xpath_processor : public xpath_stream
 public :
    /// Constructor
    xpath_processor (const TiXmlNode * XNp_source_tree, const char * cp_xpath_expr);
-   virtual ~ xpath_processor () {}
+   virtual ~ xpath_processor () = default;
    expression_result er_compute_xpath ();
    TIXML_STRING S_compute_xpath ();
    int i_compute_xpath ();
@@ -133,7 +133,7 @@ protected :
 
    /// Base node
    const TiXmlNode * XNp_base;
-   /// Node above the caller:    
+   /// Node above the caller:
    const TiXmlNode * XNp_base_parent;
    void v_build_root ();
 } ;
