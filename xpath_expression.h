@@ -28,6 +28,7 @@ distribution.
 #include "tinyxpath_conf.h"
 #include "tinyxml.h"
 #include "node_set.h"
+#include <stdexcept>
 
 namespace TinyXPath
 {
