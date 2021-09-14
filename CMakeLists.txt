@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14.0)
+cmake_minimum_required(VERSION 3.17)
 
 project(TinyXPath
   VERSION 1.3.1
@@ -10,9 +10,5 @@ add_library(tinyxpath STATIC htmlutil.cpp main.cpp tinystr.cpp tinyxml.cpp tinyx
 set_target_properties(tinyxpath PROPERTIES PUBLIC_HEADER "tinyxml.h;tinystr.h;xpath_static.h")
 
 install(TARGETS tinyxpath
-        EXPORT tinyxpathTargets
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-        PUBLIC_HEADER DESTINATION include
-        )
+  PUBLIC_HEADER DESTINATION include
+  ARCHIVE DESTINATION lib/${LIBRARY_SUBDIR})
