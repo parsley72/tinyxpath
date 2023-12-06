@@ -1,0 +1,26 @@
+# Format Style Options - Created with Clang Power Tools
+---
+BasedOnStyle: WebKit
+AlignAfterOpenBracket: Align
+AlignTrailingComments: true
+BreakBeforeBraces: Allman
+BreakConstructorInitializers: AfterColon
+ColumnLimit: 210
+ContinuationIndentWidth: 2
+DerivePointerAlignment: true
+EmptyLineBeforeAccessModifier: Never
+IndentCaseLabels: true
+IndentPPDirectives: BeforeHash
+IndentWidth: 2
+MaxEmptyLinesToKeep: 2
+PointerAlignment: Middle
+ReflowComments: false
+SortIncludes: false
+SpaceAfterCStyleCast: true
+SpaceAfterLogicalNot: true
+SpaceBeforeCaseColon: true
+SpaceBeforeParens: Always
+SpacesBeforeTrailingComments: 3
+SpaceBeforeSquareBrackets: true
+UseTab: Always
+...
