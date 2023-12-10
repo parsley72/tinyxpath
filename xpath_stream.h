@@ -48,12 +48,12 @@ class xpath_stream : public byte_stream
 {
   protected:
   /// List of tokens
-  token_syntax_decoder* tlp_list;
+  token_syntax_decoder* _tlp_list;
   public:
   /// constructor
   xpath_stream (const char* cp_in);
   /// destructor
-  virtual ~xpath_stream () { delete tlp_list; }
+  virtual ~xpath_stream () { delete _tlp_list; }
   /// Decode the byte stream, and construct the lexical list
   void v_lexico_decode ()
   {
@@ -110,7 +110,7 @@ class xpath_stream : public byte_stream
 	      }
 	      else
 	      {
-		tlp_list->v_add_token (lex_next, bp_get_backward (1), 1);
+		_tlp_list->v_add_token (lex_next, bp_get_backward (1), 1);
 		b_pop ();
 	      }
 	      break;
@@ -129,7 +129,7 @@ class xpath_stream : public byte_stream
 	      state = s_literal_2;
 	      break;
 	    default :
-	      tlp_list->v_add_token (lex_next, bp_get_backward (1), 1);
+	      _tlp_list->v_add_token (lex_next, bp_get_backward (1), 1);
 	      b_pop ();
 	      break;
 	  }
@@ -139,7 +139,7 @@ class xpath_stream : public byte_stream
 	  switch (lex_next)
 	  {
 	    case lex_1_quote :
-	      tlp_list->v_add_token (lex_literal, bp_get_backward (u_size + 1), u_size);
+	      _tlp_list->v_add_token (lex_literal, bp_get_backward (u_size + 1), u_size);
 	      b_pop ();
 	      state = s_init;
 	      break;
@@ -154,7 +154,7 @@ class xpath_stream : public byte_stream
 	  switch (lex_next)
 	  {
 	    case lex_2_quote :
-	      tlp_list->v_add_token (lex_literal, bp_get_backward (u_size + 1), u_size);
+	      _tlp_list->v_add_token (lex_literal, bp_get_backward (u_size + 1), u_size);
 	      b_pop ();
 	      state = s_init;
 	      break;
@@ -179,7 +179,7 @@ class xpath_stream : public byte_stream
 	      break;
 	    default :
 	      lex_new = lex_test_id (bp_get_backward (u_size + 1), u_size, lex_next);
-	      tlp_list->v_add_token (lex_new, bp_get_backward (u_size + 1), u_size);
+	      _tlp_list->v_add_token (lex_new, bp_get_backward (u_size + 1), u_size);
 	      state = s_init;
 	      break;
 	  }
@@ -192,7 +192,7 @@ class xpath_stream : public byte_stream
 	    case lex_dot :
 	      if (o_dot_in_number)
 	      {
-		tlp_list->v_add_token (lex_number, bp_get_backward (u_size + 1), u_size);
+		_tlp_list->v_add_token (lex_number, bp_get_backward (u_size + 1), u_size);
 		state = s_init;
 	      }
 	      else
@@ -207,7 +207,7 @@ class xpath_stream : public byte_stream
 	      b_pop ();
 	      break;
 	    default :
-	      tlp_list->v_add_token (lex_number, bp_get_backward (u_size + 1), u_size);
+	      _tlp_list->v_add_token (lex_number, bp_get_backward (u_size + 1), u_size);
 	      state = s_init;
 	      break;
 	  }
@@ -225,7 +225,7 @@ class xpath_stream : public byte_stream
   void v_evaluate ()
   {
     v_lexico_decode ();
-    tlp_list->v_syntax_decode ();
+    _tlp_list->v_syntax_decode ();
   }
 
   /// Callback used by token_syntax_decoder::v_syntax_decode to notify of an action to be made. Pure virtual
@@ -238,4 +238,4 @@ class xpath_stream : public byte_stream
 
 }
 
-#endif
+#endif	 // __TINYXPSTREAM_H

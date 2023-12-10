@@ -47,8 +47,8 @@ namespace TinyXPath
 class execution_error
 {
   public:
-  execution_error (int i_) { i = i_; }
-  int i;
+  execution_error (int i) { _i = i; }
+  int _i;
 };
 class error_not_yet : public execution_error
 {
@@ -84,8 +84,8 @@ class xpath_processor : public xpath_stream
   virtual void v_action (xpath_construct, unsigned, unsigned, const char*);
   virtual int i_get_action_counter ();
 
-  xpath_stack xs_stack;
-  action_store as_action_store;
+  xpath_stack _xs_stack;
+  action_store _as_action_store;
   void v_execute_stack ();
   void v_pop_one_action (xpath_construct& xc_action, unsigned& u_sub, unsigned& u_ref, TIXML_STRING& S_literal);
   void v_execute_one (xpath_construct xc_rule, bool o_skip_only);
@@ -127,32 +127,32 @@ class xpath_processor : public xpath_stream
   void v_function_opposite ();
   void v_function_mult (expression_result** erpp_arg, unsigned u_sub);
 
-  void v_push_int (int i_val, const char* cp_comment = "") { xs_stack.v_push_int (i_val, cp_comment); }
-  void v_push_string (TIXML_STRING S_val) { xs_stack.v_push_string (S_val); }
-  void v_push_bool (bool o_val) { xs_stack.v_push_bool (o_val); }
-  void v_push_double (double d_val) { xs_stack.v_push_double (d_val); }
-  void v_push_node_set (node_set* nsp_val) { xs_stack.v_push_node_set (nsp_val); }
+  void v_push_int (int i_val, const char* cp_comment = "") { _xs_stack.v_push_int (i_val, cp_comment); }
+  void v_push_string (TIXML_STRING S_val) { _xs_stack.v_push_string (S_val); }
+  void v_push_bool (bool o_val) { _xs_stack.v_push_bool (o_val); }
+  void v_push_double (double d_val) { _xs_stack.v_push_double (d_val); }
+  void v_push_node_set (node_set* nsp_val) { _xs_stack.v_push_node_set (nsp_val); }
 
-  bool o_pop_bool () { return xs_stack.o_pop_bool (); }
-  int i_pop_int () { return xs_stack.i_pop_int (); }
-  TIXML_STRING S_pop_string () { return xs_stack.S_pop_string (); }
-  node_set ns_pop_node_set () { return xs_stack.ns_pop_node_set (); }
+  bool o_pop_bool () { return _xs_stack.o_pop_bool (); }
+  int i_pop_int () { return _xs_stack.i_pop_int (); }
+  TIXML_STRING S_pop_string () { return _xs_stack.S_pop_string (); }
+  node_set ns_pop_node_set () { return _xs_stack.ns_pop_node_set (); }
 
   void v_set_context (const TiXmlElement* XEp_in, bool o_by_name);
-  const TiXmlElement* XEp_get_context () { return XEp_context; }
+  const TiXmlElement* XEp_get_context () { return _XEp_context; }
   /// Current context
-  const TiXmlElement* XEp_context;
+  const TiXmlElement* _XEp_context;
   /// The result of the XPath evaluation, for further node retrieving by v_get_xpath_base
-  expression_result er_result;
-  bool o_is_context_by_name;
+  expression_result _er_result;
+  bool _o_is_context_by_name;
 
   /// Base node
-  const TiXmlNode* XNp_base;
+  const TiXmlNode* _XNp_base;
   /// Node above the caller:
-  const TiXmlNode* XNp_base_parent;
+  const TiXmlNode* _XNp_base_parent;
   void v_build_root ();
 };
 
 }
 
-#endif
+#endif	 // __XPATH_PROCESSOR_H

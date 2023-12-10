@@ -49,14 +49,14 @@ xpath_processor::xpath_processor (const TiXmlNode *XNp_source_tree,   ///< Sourc
     e_error (e_no_error)
 {
   if (XNp_source_tree && cp_xpath_expr)
-    XNp_base = XNp_source_tree;
+    _XNp_base = XNp_source_tree;
   else
-    XNp_base = nullptr;
-  er_result.v_set_root (XNp_base);
-  xs_stack.v_set_root (XNp_base);
-  XEp_context = nullptr;
-  o_is_context_by_name = false;
-  XNp_base_parent = nullptr;
+    _XNp_base = nullptr;
+  _er_result.v_set_root (_XNp_base);
+  _xs_stack.v_set_root (_XNp_base);
+  _XEp_context = nullptr;
+  _o_is_context_by_name = false;
+  _XNp_base_parent = nullptr;
 }
 
 /// Compute an XPath expression, and return the number of nodes in the resulting node set.
@@ -64,9 +64,9 @@ xpath_processor::xpath_processor (const TiXmlNode *XNp_source_tree,   ///< Sourc
 unsigned xpath_processor::u_compute_xpath_node_set ()
 {
   er_compute_xpath ();
-  if (er_result.e_type != e_node_set)
+  if (_er_result._e_type != e_node_set)
     return 0;
-  return er_result.nsp_get_node_set ()->u_get_nb_node_in_set ();
+  return _er_result.nsp_get_node_set ()->u_get_nb_node_in_set ();
 }
 
 /// Get one of the XML nodes from the resulting node set. Can only be used after a call to u_compute_xpath_node_set
@@ -76,12 +76,12 @@ void xpath_processor::v_get_xpath_base (unsigned u_order,	     ///< Order of the
 {
   XBp_res = nullptr;
   o_attrib = false;
-  if (er_result.e_type != e_node_set)
+  if (_er_result._e_type != e_node_set)
     return;
-  if (u_order >= er_result.nsp_get_node_set ()->u_get_nb_node_in_set ())
+  if (u_order >= _er_result.nsp_get_node_set ()->u_get_nb_node_in_set ())
     return;
-  XBp_res = er_result.nsp_get_node_set ()->XBp_get_base_in_set (u_order);
-  o_attrib = er_result.nsp_get_node_set ()->o_is_attrib (u_order);
+  XBp_res = _er_result.nsp_get_node_set ()->XBp_get_base_in_set (u_order);
+  o_attrib = _er_result.nsp_get_node_set ()->o_is_attrib (u_order);
 }
 
 /// Retrieves an XPath node from the node set. This assumes you know it's not an attribute
@@ -114,18 +114,18 @@ TiXmlAttribute *xpath_processor::XAp_get_xpath_attribute (unsigned u_order)   //
 
 void xpath_processor::v_build_root ()
 {
-  if (XNp_base)
+  if (_XNp_base)
   {
-    XNp_base_parent = XNp_base->Parent ();
-    if (! XNp_base_parent)
+    _XNp_base_parent = _XNp_base->Parent ();
+    if (! _XNp_base_parent)
       // no correct initialization of the xpath_processor object
       throw execution_error (1);
     // set the main node as the context one, if it's an element
-    if (XNp_base->ToElement ())
-      XEp_context = XNp_base->ToElement ();
+    if (_XNp_base->ToElement ())
+      _XEp_context = _XNp_base->ToElement ();
   }
   else
-    XNp_base_parent = nullptr;
+    _XNp_base_parent = nullptr;
 }
 
 /// Compute an XPath expression
@@ -133,13 +133,13 @@ expression_result xpath_processor::er_compute_xpath ()
 {
   try
   {
-    XNp_base_parent = XNp_base->Parent ();
-    if (! XNp_base_parent)
+    _XNp_base_parent = _XNp_base->Parent ();
+    if (! _XNp_base_parent)
       // no correct initialization of the xpath_processor object
       throw execution_error (1);
     // set the main node as the context one, if it's an element
-    if (XNp_base->ToElement ())
-      XEp_context = XNp_base->ToElement ();
+    if (_XNp_base->ToElement ())
+      _XEp_context = _XNp_base->ToElement ();
 
     // Decode XPath expression
     v_evaluate ();
@@ -148,45 +148,45 @@ expression_result xpath_processor::er_compute_xpath ()
     v_execute_stack ();
 
     /// The executions stack need to contain 1 and only 1 element, otherwize it's not valid
-    if (xs_stack.u_get_size () == 1)
+    if (_xs_stack.u_get_size () == 1)
     {
-      er_result = *xs_stack.erp_top ();
-      xs_stack.v_pop ();
+      _er_result = *_xs_stack.erp_top ();
+      _xs_stack.v_pop ();
       e_error = e_no_error;
     }
     else
     {
       expression_result er_null (nullptr);
-      er_result = er_null;
+      _er_result = er_null;
       e_error = e_error_stack;
     }
   }
   catch (syntax_error)
   {
     expression_result er_null (nullptr);
-    er_result = er_null;
+    _er_result = er_null;
     e_error = e_error_syntax;
   }
   catch (syntax_overflow)
   {
     expression_result er_null (nullptr);
-    er_result = er_null;
+    _er_result = er_null;
     e_error = e_error_overflow;
   }
   catch (execution_error)
   {
     expression_result er_null (nullptr);
-    er_result = er_null;
+    _er_result = er_null;
     e_error = e_error_execution;
   }
 
-  return er_result;
+  return _er_result;
 }
 
 /// Compute an XPath expression and return the result as a string
 TIXML_STRING xpath_processor::S_compute_xpath ()
 {
-  expression_result er_res (XNp_base);
+  expression_result er_res (_XNp_base);
   TIXML_STRING S_res;
 
   er_res = er_compute_xpath ();
@@ -197,7 +197,7 @@ TIXML_STRING xpath_processor::S_compute_xpath ()
 /// Compute an XPath expression and return the result as an integer
 int xpath_processor::i_compute_xpath ()
 {
-  expression_result er_res (XNp_base);
+  expression_result er_res (_XNp_base);
   int i_res;
 
   er_res = er_compute_xpath ();
@@ -207,7 +207,7 @@ int xpath_processor::i_compute_xpath ()
 
 bool xpath_processor::o_compute_xpath ()
 {
-  expression_result er_res (XNp_base);
+  expression_result er_res (_XNp_base);
   bool o_res;
 
   er_res = er_compute_xpath ();
@@ -217,7 +217,7 @@ bool xpath_processor::o_compute_xpath ()
 
 double xpath_processor::d_compute_xpath ()
 {
-  expression_result er_res (XNp_base);
+  expression_result er_res (_XNp_base);
   double d_res;
 
   er_res = er_compute_xpath ();
@@ -231,9 +231,9 @@ void xpath_processor::v_action (xpath_construct xc_rule,   ///< XPath Rule
 				unsigned u_variable,	   ///< Parameter, depends on the rule
 				const char *cp_literal)	   ///< Input literal, depends on the rule
 {
-  as_action_store.v_add (xc_rule, u_sub, u_variable, cp_literal);
+  _as_action_store.v_add (xc_rule, u_sub, u_variable, cp_literal);
 #ifdef TINYXPATH_DEBUG
-  printf ("Action %2d : %s (%d,%d,%s)\n", as_action_store.i_get_size () - 1, cp_disp_construct (xc_rule), u_sub, u_variable, cp_literal);
+  printf ("Action %2d : %s (%d,%d,%s)\n", _as_action_store.i_get_size () - 1, cp_disp_construct (xc_rule), u_sub, u_variable, cp_literal);
 #endif
 }
 
@@ -241,13 +241,13 @@ void xpath_processor::v_action (xpath_construct xc_rule,   ///< XPath Rule
 int xpath_processor::i_get_action_counter ()
 {
   // callback for current stack position
-  return as_action_store.i_get_size ();
+  return _as_action_store.i_get_size ();
 }
 
-/// Internal use. Executes the XPath expression. The executions starts at the end of the as_action_store list
+/// Internal use. Executes the XPath expression. The executions starts at the end of the _as_action_store list
 void xpath_processor::v_execute_stack ()
 {
-  as_action_store.v_set_position (as_action_store.i_get_size () - 1);
+  _as_action_store.v_set_position (_as_action_store.i_get_size () - 1);
   v_execute_one (xpath_expr, false);
 }
 
@@ -259,11 +259,11 @@ void xpath_processor::v_pop_one_action (xpath_construct &xc_action,   ///< Next 
 {
   int i_1, i_2, i_3;
 
-  as_action_store.v_get (as_action_store.i_get_position (), i_1, i_2, i_3, S_literal);
+  _as_action_store.v_get (_as_action_store.i_get_position (), i_1, i_2, i_3, S_literal);
   xc_action = (xpath_construct) i_1;
   u_sub = i_2;
   u_ref = i_3;
-  as_action_store.v_dec_position ();
+  _as_action_store.v_dec_position ();
 }
 
 /// Executes one XPath rule
@@ -307,14 +307,14 @@ void xpath_processor::v_execute_one (xpath_construct xc_rule,	///< Rule number
 	    {
 	      erpp_arg = new expression_result *[2];
 	      memset (erpp_arg, 0, 2 * sizeof (expression_result *));
-	      erpp_arg [1] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [1] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	    }
 	    v_execute_one (xpath_and_expr, o_skip_only);
 	    if (! o_skip_only)
 	    {
-	      erpp_arg [0] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [0] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	      v_function_or (erpp_arg);
 	    }
 	  }
@@ -346,14 +346,14 @@ void xpath_processor::v_execute_one (xpath_construct xc_rule,	///< Rule number
 	    {
 	      erpp_arg = new expression_result *[2];
 	      memset (erpp_arg, 0, 2 * sizeof (expression_result *));
-	      erpp_arg [1] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [1] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	    }
 	    v_execute_one (xpath_or_expr, o_skip_only);
 	    if (! o_skip_only)
 	    {
-	      erpp_arg [0] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [0] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	      v_function_or (erpp_arg);
 	    }
 	  }
@@ -393,14 +393,14 @@ void xpath_processor::v_execute_one (xpath_construct xc_rule,	///< Rule number
 	    {
 	      erpp_arg = new expression_result *[2];
 	      memset (erpp_arg, 0, 2 * sizeof (expression_result *));
-	      erpp_arg [1] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [1] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	    }
 	    v_execute_one (xpath_equality_expr, o_skip_only);
 	    if (! o_skip_only)
 	    {
-	      erpp_arg [0] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [0] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	      v_function_and (erpp_arg);
 	    }
 	  }
@@ -440,14 +440,14 @@ void xpath_processor::v_execute_one (xpath_construct xc_rule,	///< Rule number
 	    {
 	      erpp_arg = new expression_result *[2];
 	      memset (erpp_arg, 0, 2 * sizeof (expression_result *));
-	      erpp_arg [1] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [1] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	    }
 	    v_execute_one (xpath_relational_expr, o_skip_only);	  // this is buggy. should be xpath_equality_expr
 	    if (! o_skip_only)
 	    {
-	      erpp_arg [0] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [0] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	      if (u_sub == xpath_equality_expr_equal)
 		v_function_equal (erpp_arg);
 	      else
@@ -492,14 +492,14 @@ void xpath_processor::v_execute_one (xpath_construct xc_rule,	///< Rule number
 	    {
 	      erpp_arg = new expression_result *[2];
 	      memset (erpp_arg, 0, 2 * sizeof (expression_result *));
-	      erpp_arg [1] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [1] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	    }
 	    v_execute_one (xpath_additive_expr, o_skip_only);	// this is buggy. should be xpath_equality_expr
 	    if (! o_skip_only)
 	    {
-	      erpp_arg [0] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [0] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	      v_function_relational (erpp_arg, u_sub);
 	    }
 	  }
@@ -541,14 +541,14 @@ void xpath_processor::v_execute_one (xpath_construct xc_rule,	///< Rule number
 	    {
 	      erpp_arg = new expression_result *[2];
 	      memset (erpp_arg, 0, 2 * sizeof (expression_result *));
-	      erpp_arg [1] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [1] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	    }
 	    v_execute_one (xpath_multiplicative_expr, o_skip_only);
 	    if (! o_skip_only)
 	    {
-	      erpp_arg [0] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [0] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	      if (u_sub == xpath_additive_expr_plus)
 		v_function_plus (erpp_arg);
 	      else
@@ -585,14 +585,14 @@ void xpath_processor::v_execute_one (xpath_construct xc_rule,	///< Rule number
 	    {
 	      erpp_arg = new expression_result *[2];
 	      memset (erpp_arg, 0, 2 * sizeof (expression_result *));
-	      erpp_arg [1] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [1] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	    }
 	    v_execute_one (xpath_additive_expr, o_skip_only);
 	    if (! o_skip_only)
 	    {
-	      erpp_arg [0] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [0] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	      if (u_sub == xpath_additive_expr_more_plus)
 		v_function_plus (erpp_arg);
 	      else
@@ -636,14 +636,14 @@ void xpath_processor::v_execute_one (xpath_construct xc_rule,	///< Rule number
 	    {
 	      erpp_arg = new expression_result *[2];
 	      memset (erpp_arg, 0, 2 * sizeof (expression_result *));
-	      erpp_arg [1] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [1] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	    }
 	    v_execute_one (xpath_unary_expr, o_skip_only);
 	    if (! o_skip_only)
 	    {
-	      erpp_arg [0] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [0] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	      v_function_mult (erpp_arg, u_sub);
 	    }
 	  }
@@ -688,7 +688,7 @@ void xpath_processor::v_execute_one (xpath_construct xc_rule,	///< Rule number
 	  break;
 	case xpath_union_expr_union :
 	  v_execute_one (xpath_union_expr, o_skip_only);
-	  if (xs_stack.erp_top ()->e_type != e_node_set)
+	  if (_xs_stack.erp_top ()->_e_type != e_node_set)
 	    throw execution_error (9);
 	  // here after is a block, so that the node_set are locals to it
 	  {
@@ -782,10 +782,10 @@ void xpath_processor::v_execute_one (xpath_construct xc_rule,	///< Rule number
 	    v_execute_one (xpath_argument, o_skip_only);
 	    if (! o_skip_only)
 	    {
-	      if (! xs_stack.u_get_size ())
+	      if (! _xs_stack.u_get_size ())
 		throw execution_error (10);
-	      erpp_arg [u_variable - u_arg - 1] = new expression_result (*xs_stack.erp_top ());
-	      xs_stack.v_pop ();
+	      erpp_arg [u_variable - u_arg - 1] = new expression_result (*_xs_stack.erp_top ());
+	      _xs_stack.v_pop ();
 	    }
 	  }
 	}
@@ -999,12 +999,12 @@ void xpath_processor::v_execute_absolute_path (unsigned u_action_position,   ///
     TIXML_STRING S_lit;
 
     // compute position of the first (absolute) step
-    i_current = as_action_store.i_get_position ();
+    i_current = _as_action_store.i_get_position ();
     if (o_everywhere)
       i_relative = i_current - 2;
     else
       i_relative = i_current - 1;
-    as_action_store.v_get (i_relative, i_1, i_2, i_3, S_lit);
+    _as_action_store.v_get (i_relative, i_1, i_2, i_3, S_lit);
     if (i_1 == xpath_relative_location_path)
     {
       o_do_last = true;
@@ -1016,7 +1016,7 @@ void xpath_processor::v_execute_absolute_path (unsigned u_action_position,   ///
       i_first = i_relative;
     }
     // i_first = i_3 - 1;
-    as_action_store.v_set_position (i_first);
+    _as_action_store.v_set_position (i_first);
     if (o_everywhere)
       i_relative_action = -1;
     else
@@ -1027,12 +1027,12 @@ void xpath_processor::v_execute_absolute_path (unsigned u_action_position,   ///
     do
     {
       i_relative--;
-      as_action_store.v_get (i_relative, i_1, i_2, i_3, S_lit);
+      _as_action_store.v_get (i_relative, i_1, i_2, i_3, S_lit);
       if (i_1 != xpath_relative_location_path)
 	o_end = true;
       else
       {
-	as_action_store.v_set_position (i_3 - 1);
+	_as_action_store.v_set_position (i_3 - 1);
 	v_execute_step (i_relative_action, false);
       }
     } while (! o_end);
@@ -1041,11 +1041,11 @@ void xpath_processor::v_execute_absolute_path (unsigned u_action_position,   ///
     {
       // apply last one
 
-      as_action_store.v_set_position (i_relative);
+      _as_action_store.v_set_position (i_relative);
       v_execute_step (i_relative_action, false);
     }
     // resume the execution after the whole path construction
-    as_action_store.v_set_position ((int) u_end_action - 1);
+    _as_action_store.v_set_position ((int) u_end_action - 1);
   }
 }
 
@@ -1071,23 +1071,23 @@ void xpath_processor ::v_execute_step (int &i_relative_action,	 ///< Path positi
     {
       case -2 :
 	// relative to context
-	ns_source.v_add_node_in_set (XEp_context);
+	ns_source.v_add_node_in_set (_XEp_context);
 	i_relative_action = 1;
 	break;
       case -1 :
 	// everywhere
-	ns_source.v_copy_selected_node_recursive_root_only (XNp_base_parent, XNp_base);
+	ns_source.v_copy_selected_node_recursive_root_only (_XNp_base_parent, _XNp_base);
 	i_relative_action = 1;
 	break;
       case 0 :
 	// first absolute
-	ns_source.v_add_node_in_set (XNp_base_parent);
+	ns_source.v_add_node_in_set (_XNp_base_parent);
 	i_relative_action = 1;
 	break;
       default :
 	// second and following steps
-	ns_source = *(xs_stack.erp_top ()->nsp_get_node_set ());
-	xs_stack.v_pop ();
+	ns_source = *(_xs_stack.erp_top ()->nsp_get_node_set ());
+	_xs_stack.v_pop ();
 	break;
     }
   }
@@ -1096,22 +1096,22 @@ void xpath_processor ::v_execute_step (int &i_relative_action,	 ///< Path positi
   v_pop_one_action (xc_action, u_sub, u_variable, S_literal);
 
   // Skip the predicates
-  i_pred_store = as_action_store.i_get_position ();
+  i_pred_store = _as_action_store.i_get_position ();
   for (u_pred = 0; u_pred < u_variable; u_pred++)
     v_execute_one (xpath_predicate, true);
-  i_node_store = as_action_store.i_get_position ();
+  i_node_store = _as_action_store.i_get_position ();
 
   // Skip the node test
   v_execute_one (xpath_node_test, true);
 
   // Run the axis
   v_execute_one (xpath_axis_specifier, o_skip_only);
-  i_end_store = as_action_store.i_get_position ();
+  i_end_store = _as_action_store.i_get_position ();
 
   // Run the node test
-  as_action_store.v_set_position (i_node_store);
+  _as_action_store.v_set_position (i_node_store);
   v_execute_one (xpath_node_test, o_skip_only);
-  as_action_store.v_set_position (i_pred_store);
+  _as_action_store.v_set_position (i_pred_store);
 
   if (! o_skip_only)
   {
@@ -1163,17 +1163,17 @@ void xpath_processor ::v_execute_step (int &i_relative_action,	 ///< Path positi
 	    case lex_ancestor :
 	      XNp_parent = XNp_father->Parent ();
 	      // we have to exclude our own dummy parent
-	      while (XNp_parent && XNp_parent != XNp_base_parent)
+	      while (XNp_parent && XNp_parent != _XNp_base_parent)
 	      {
 		ns_target.v_add_node_in_set_if_name_or_star (XNp_parent, S_name);
 		XNp_parent = XNp_parent->Parent ();
 	      }
 	      break;
 	    case lex_ancestor_or_self :
-	      if (XNp_father->ToElement () && XNp_father != XNp_base_parent)
+	      if (XNp_father->ToElement () && XNp_father != _XNp_base_parent)
 		ns_target.v_add_node_in_set_if_name_or_star (XNp_father, S_name);
 	      XNp_parent = XNp_father->Parent ();
-	      while (XNp_parent && XNp_parent != XNp_base_parent)
+	      while (XNp_parent && XNp_parent != _XNp_base_parent)
 	      {
 		ns_target.v_add_node_in_set_if_name_or_star (XNp_parent, S_name);
 		XNp_parent = XNp_parent->Parent ();
@@ -1208,7 +1208,7 @@ void xpath_processor ::v_execute_step (int &i_relative_action,	 ///< Path positi
 	    case lex_descendant_or_self :
 	      if (XNp_father->ToElement ())
 	      {
-		if (XNp_father != XNp_base_parent)
+		if (XNp_father != _XNp_base_parent)
 		  ns_target.v_add_node_in_set_if_name_or_star (XNp_father, S_name);
 		if (S_name == "*")
 		  ns_target.v_copy_selected_node_recursive_no_attrib (XNp_father, nullptr);
@@ -1219,7 +1219,7 @@ void xpath_processor ::v_execute_step (int &i_relative_action,	 ///< Path positi
 	    case lex_self :
 	      if (XNp_father->ToElement ())
 	      {
-		if (XNp_father != XNp_base_parent && XNp_father->ToElement ())
+		if (XNp_father != _XNp_base_parent && XNp_father->ToElement ())
 		  ns_target.v_add_node_in_set_if_name_or_star (XNp_father, S_name);
 	      }
 	      break;
@@ -1275,7 +1275,7 @@ void xpath_processor ::v_execute_step (int &i_relative_action,	 ///< Path positi
 	  XEp_elem = ns_target.XNp_get_node_in_set (u_node)->ToElement ();
 	  if (XEp_elem)
 	  {
-	    as_action_store.v_set_position (i_pred_store);
+	    _as_action_store.v_set_position (i_pred_store);
 	    if (o_check_predicate (XEp_elem, o_by_name))
 	      ns_after_predicate.v_add_node_in_set (XEp_elem);
 	  }
@@ -1286,7 +1286,7 @@ void xpath_processor ::v_execute_step (int &i_relative_action,	 ///< Path positi
     else
       v_push_node_set (&ns_target);
   }
-  as_action_store.v_set_position (i_end_store);
+  _as_action_store.v_set_position (i_end_store);
 }
 
 /// Spec extract :
@@ -1303,8 +1303,8 @@ bool xpath_processor::o_check_predicate (const TiXmlElement *XEp_child, bool o_b
   v_set_context (XEp_child, o_by_name);
   v_execute_one (xpath_predicate, false);
   v_set_context (nullptr, false);
-  erp_top = xs_stack.erp_top ();
-  switch (erp_top->e_type)
+  erp_top = _xs_stack.erp_top ();
+  switch (erp_top->_e_type)
   {
     case e_double :
     case e_int :
@@ -1314,7 +1314,7 @@ bool xpath_processor::o_check_predicate (const TiXmlElement *XEp_child, bool o_b
       o_keep = erp_top->o_get_bool ();
       break;
   }
-  xs_stack.v_pop ();
+  _xs_stack.v_pop ();
   return o_keep;
 }
 
@@ -1425,7 +1425,7 @@ void xpath_processor::v_function_ceiling (unsigned u_nb_arg,		  ///< Nb of argum
 
   if (u_nb_arg != 1)
     throw execution_error (14);
-  switch (erpp_arg [0]->e_type)
+  switch (erpp_arg [0]->_e_type)
   {
     case e_int :
     case e_bool :
@@ -1478,7 +1478,7 @@ void xpath_processor::v_function_count (unsigned u_nb_arg,		///< Nb of arguments
 
   if (! u_nb_arg)
     throw execution_error (17);
-  if (erpp_arg [0]->e_type != e_node_set)
+  if (erpp_arg [0]->_e_type != e_node_set)
     i_res = 0;
   else
     i_res = erpp_arg [0]->nsp_get_node_set ()->u_get_nb_node_in_set ();
@@ -1503,7 +1503,7 @@ void xpath_processor::v_function_floor (unsigned u_nb_arg,		///< Nb of arguments
 
   if (u_nb_arg != 1)
     throw execution_error (19);
-  switch (erpp_arg [0]->e_type)
+  switch (erpp_arg [0]->_e_type)
   {
     case e_int :
     case e_bool :
@@ -1545,13 +1545,13 @@ void xpath_processor::v_function_name (unsigned u_nb_arg,	       ///< Nb of argu
   {
     case 0 :
       // name of the context node
-      XEp_context = XEp_get_context ();
-      S_res = XEp_context->Value ();
+      _XEp_context = XEp_get_context ();
+      S_res = _XEp_context->Value ();
       break;
     case 1 :
       // name of the argument
       S_res = "";
-      if (erpp_arg [0]->e_type == e_node_set)
+      if (erpp_arg [0]->_e_type == e_node_set)
       {
 	nsp_set = erpp_arg [0]->nsp_get_node_set ();
 	if (nsp_set->u_get_nb_node_in_set ())
@@ -1606,7 +1606,7 @@ void xpath_processor::v_function_position (unsigned u_nb_arg,		   ///< Nb of arg
   XEp_context = XEp_get_context ();
   if (! XEp_context)
     throw execution_error (26);
-  v_push_int (i_xml_cardinality (XEp_context, o_is_context_by_name), "position()");
+  v_push_int (i_xml_cardinality (XEp_context, _o_is_context_by_name), "position()");
 }
 
 /// XPath \b starts-with function
@@ -1702,7 +1702,7 @@ void xpath_processor::v_function_sum (unsigned u_nb_arg,	      ///< Nb of argume
   i_sum = 0;
   d_sum = 0.0;
   o_out_double = false;
-  if (erpp_arg [0]->e_type != e_node_set)
+  if (erpp_arg [0]->_e_type != e_node_set)
     throw execution_error (31);
   nsp_set = erpp_arg [0]->nsp_get_node_set ();
   assert (nsp_set);
@@ -1865,19 +1865,19 @@ void xpath_processor::v_function_equal (expression_result **erpp_arg)
   assert (erpp_arg);
   assert (erpp_arg [0]);
   assert (erpp_arg [1]);
-  if (erpp_arg [0]->e_type == e_node_set)
-    if (erpp_arg [1]->e_type == e_node_set)
+  if (erpp_arg [0]->_e_type == e_node_set)
+    if (erpp_arg [1]->_e_type == e_node_set)
       v_function_equal_2_node (erpp_arg [0], erpp_arg [1]);
     else
       v_function_equal_node_and_other (erpp_arg [0], erpp_arg [1]);
-  else if (erpp_arg [1]->e_type == e_node_set)
+  else if (erpp_arg [1]->_e_type == e_node_set)
     v_function_equal_node_and_other (erpp_arg [1], erpp_arg [0]);
   else
   {
     // none are node sets : alternate decision table on bools, numbers and strings
-    if (erpp_arg [0]->e_type == e_bool || erpp_arg [1]->e_type == e_bool)
+    if (erpp_arg [0]->_e_type == e_bool || erpp_arg [1]->_e_type == e_bool)
       o_res = erpp_arg [0]->o_get_bool () == erpp_arg [1]->o_get_bool ();
-    else if (erpp_arg [0]->e_type == e_int || erpp_arg [1]->e_type == e_int || erpp_arg [0]->e_type == e_double || erpp_arg [1]->e_type == e_double)
+    else if (erpp_arg [0]->_e_type == e_int || erpp_arg [1]->_e_type == e_int || erpp_arg [0]->_e_type == e_double || erpp_arg [1]->_e_type == e_double)
       o_res = erpp_arg [0]->d_get_double () == erpp_arg [1]->d_get_double ();
     else
       o_res = erpp_arg [0]->S_get_string () == erpp_arg [1]->S_get_string ();
@@ -1915,7 +1915,7 @@ void xpath_processor::v_function_equal_node_and_other (expression_result *erp_no
 
   o_res = false;
   nsp_ptr = erp_node_set->nsp_get_node_set ();
-  switch (erp_non->e_type)
+  switch (erp_non->_e_type)
   {
     case e_bool :
       o_res = erp_non->o_get_bool () == erp_node_set->o_get_bool ();
@@ -1964,7 +1964,7 @@ void xpath_processor::v_function_plus (expression_result **erpp_arg)
   assert (erpp_arg);
   assert (erpp_arg [0]);
   assert (erpp_arg [1]);
-  if (erpp_arg [0]->e_type == e_double || erpp_arg [1]->e_type == e_double)
+  if (erpp_arg [0]->_e_type == e_double || erpp_arg [1]->_e_type == e_double)
     v_push_double (erpp_arg [0]->d_get_double () + erpp_arg [1]->d_get_double ());
   else
     v_push_int (erpp_arg [0]->i_get_int () + erpp_arg [1]->i_get_int (), "+");
@@ -1976,7 +1976,7 @@ void xpath_processor::v_function_minus (expression_result **erpp_arg)
   assert (erpp_arg);
   assert (erpp_arg [0]);
   assert (erpp_arg [1]);
-  if (erpp_arg [0]->e_type == e_double || erpp_arg [1]->e_type == e_double)
+  if (erpp_arg [0]->_e_type == e_double || erpp_arg [1]->_e_type == e_double)
     v_push_double (erpp_arg [0]->d_get_double () - erpp_arg [1]->d_get_double ());
   else
     v_push_int (erpp_arg [0]->i_get_int () - erpp_arg [1]->i_get_int (), "-");
@@ -2009,7 +2009,7 @@ void xpath_processor::v_function_relational (expression_result **erpp_arg, unsig
   assert (erpp_arg [0]);
   assert (erpp_arg [1]);
 
-  if (erpp_arg [0]->e_type == e_double || erpp_arg [1]->e_type == e_double)
+  if (erpp_arg [0]->_e_type == e_double || erpp_arg [1]->_e_type == e_double)
   {
     double d_arg_1, d_arg_2;
 
@@ -2067,7 +2067,7 @@ void xpath_processor::v_function_mult (expression_result **erpp_arg, unsigned u_
   assert (erpp_arg [0]);
   assert (erpp_arg [1]);
 
-  if (erpp_arg [0]->e_type == e_double || erpp_arg [1]->e_type == e_double || u_sub == xpath_multiplicative_expr_div)
+  if (erpp_arg [0]->_e_type == e_double || erpp_arg [1]->_e_type == e_double || u_sub == xpath_multiplicative_expr_div)
   {
     double d_arg_1, d_arg_2, d_res;
 
@@ -2117,11 +2117,11 @@ void xpath_processor::v_function_mult (expression_result **erpp_arg, unsigned u_
 /// \n It computes the mathematical opposite
 void xpath_processor::v_function_opposite ()
 {
-  expression_result er_arg (XNp_base);
+  expression_result er_arg (_XNp_base);
 
-  er_arg = *xs_stack.erp_top ();
-  xs_stack.v_pop ();
-  switch (er_arg.e_type)
+  er_arg = *_xs_stack.erp_top ();
+  _xs_stack.v_pop ();
+  switch (er_arg._e_type)
   {
     case e_double :
       v_push_double (-1.0 * er_arg.d_get_double ());
@@ -2136,6 +2136,6 @@ void xpath_processor::v_function_opposite ()
 void xpath_processor::v_set_context (const TiXmlElement *XEp_in,   ///< Context node
 				     bool o_by_name)		   ///< true if the current node search is by name, false if it's a *
 {
-  XEp_context = XEp_in;
-  o_is_context_by_name = o_by_name;
+  _XEp_context = XEp_in;
+  _o_is_context_by_name = o_by_name;
 }

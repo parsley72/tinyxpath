@@ -51,4 +51,4 @@ extern bool o_xpath_node (const TiXmlNode* XNp_source_tree, const char* cp_xpath
 extern bool o_xpath_attribute (const TiXmlNode* XNp_source_tree, const char* cp_xpath_expr, const TiXmlAttribute*& XAp_attrib);
 }
 
-#endif
+#endif	 // __XPATH_STATIC_H

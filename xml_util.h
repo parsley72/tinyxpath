@@ -38,4 +38,4 @@ extern int i_xml_cardinality (const TiXmlElement* XEp_elem, bool o_by_name);
 extern int i_xml_family_size (const TiXmlElement* XEp_elem);
 }
 
-#endif
+#endif	 // __XML_UTIL_H

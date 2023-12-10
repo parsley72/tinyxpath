@@ -67,10 +67,10 @@ class token_syntax_decoder : public token_list
 {
   protected:
   /// Nb of recursions
-  unsigned u_nb_recurs;
+  unsigned _u_nb_recurs;
   bool o_recognize (xpath_construct xc_current, bool o_final);
   public:
-  token_syntax_decoder () : token_list (), u_nb_recurs (0) { }
+  token_syntax_decoder () : token_list (), _u_nb_recurs (0) { }
   virtual ~token_syntax_decoder () = default;
   void v_syntax_decode ();
   /// Pure virtual : action taken when processing the rule
@@ -80,4 +80,4 @@ class token_syntax_decoder : public token_list
 
 }
 
-#endif
+#endif	 // __TINYSYNTAX_H
