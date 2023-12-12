@@ -1450,8 +1450,7 @@ void xpath_processor::v_function_concat (unsigned u_nb_arg,		 ///< Nb of argumen
 
   if (! u_nb_arg)
     throw execution_error (15);
-  if (! erpp_arg)
-    S_res = erpp_arg [0]->S_get_string ();
+  S_res = erpp_arg [0]->S_get_string ();
   for (u_arg = 1; u_arg < u_nb_arg; u_arg++)
     S_res += erpp_arg [u_arg]->S_get_string ().c_str ();
   v_push_string (S_res);
